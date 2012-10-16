@@ -2,14 +2,17 @@
 <html>
   <head>
     <%= csrf_meta_tag %>
-    <%= stylesheet_link_tag 'blueprint/screen', media: 'screen' %>
-    <%= stylesheet_link_tag 'blueprint/print', media: 'print' %>
+    <%= render 'layouts/stylesheets' %>
     <title><%= title %></title>
   </head>
   <body>
-
-    <%= yield %>
-
+    <div class="container">
+      <%= render 'layouts/header' %>
+      <section class="round">
+        <%= yield %>
+      </section>
+      <%= render 'layouts/footer' %>
+    </div>
   </body>
 </html>
 
