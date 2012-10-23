@@ -36,7 +36,8 @@ describe MicropostsController do
 
       it "should render the home page" do
         post :create, micropost: @attr
-        response.should render_template('pages/home')
+        # response.should render_template('pages/home')
+        response.should redirect_to root_path
       end
     end
 
