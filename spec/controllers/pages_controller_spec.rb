@@ -3,22 +3,45 @@ require 'spec_helper'
 describe PagesController do
   render_views
 
-  before(:all) do
-    @title = "Ruby on Rails Tutorial Sample App | "
+  before(:each) do
+    @base_title = "Ruby on Rails Tutorial Sample App"
   end
 
   describe "GET 'home'" do
-    it "returns http success" do
-      get 'home'
-      response.should be_success
+
+    describe "when not signed in" do
+
+      before(:each) do
+        get :home
+      end
+
+      it "returns http success" do
+        response.should be_success
+      end
+
+      it "should have the right title" do
+        response.should have_selector("title",
+                                      content: "#{@base_title} | Home")
+      end
     end
 
-    it "should have the right title" do
-      get 'home'
-      response.should have_selector("title",
-                        content: @title + "Home")
-    end
+    describe "when signed in" do
 
+      before(:each) do
+        @user = test_sign_in(FactoryGirl.create(:user))
+        other_user = FactoryGirl.create(:user, email:(FactoryGirl.generate(:email)))
+        other_user.follow!(@user)
+      end
+
+      it "should have the right follower/following counts" do
+        get :home
+        response.should have_selector("a", href: following_user_path(@user))
+        response.should have_selector("span", id: 'following', class: 'stat',
+                                           content: "0 following")
+        response.should have_selector("a", href: followers_user_path(@user),
+                                           content: "1 follower")
+      end
+    end
   end
 
   describe "GET 'contact'" do
@@ -30,9 +53,8 @@ describe PagesController do
     it "should have the right title" do
       get 'contact'
       response.should have_selector("title",
-                        content: @title + "Contact")
+                        content: "#{@base_title} | Contact")
     end
-
   end
 
   describe "GET 'about'" do
@@ -44,7 +66,7 @@ describe PagesController do
     it "should have the right title" do
       get 'about'
       response.should have_selector("title",
-                        content: @title + "About")
+                        content: "#{@base_title} | About")
     end
   end
 
@@ -58,7 +80,7 @@ describe PagesController do
     it "should have the rigth title" do
       get 'help'
       response.should have_selector("title",
-                        content: @title + "Help")
+                        content: "#{@base_title} | Help")
     end
   end
 
